@@ -393,4 +393,243 @@ movie_dict
  2018: 96,
  2019: 93,
  2020: 90}
+```# Data Manipulation with pandas
+
+# Transforming DataFrames
+
+## Pandas 개요
+
+- pandas is built on NumPy and Matplotlib
+
+### `_df.head()`
+
+- 상위 몇개 행을 보여줌
+- 행이 많을 때 유용
+
+### `_df.info()`
+
+- 열 이름, 열에 포함 된 데이터 유형 및 누락된 값이 있는지 여부 확인
+
+### `_df.shape`
+
+- 행 수와 열수를 포함하는 튜플
+- no method, attribute.
+
+### `_df.describe()`
+
+- 수치형 데이터 열에대한 통계적 요약 제공.
+- count, mean, std, min, 25% 50%, 75%, max
+
+### `_df.values`
+
+- value들을 2차 numpy 배열로 반환
+
+### `_df.coulmns`
+
+- column 들의 이름을 가지고 있음
+
+### `_df.index`
+
+- row의 숫자들 혹은 이름들을 가지고 있음
+
+## Sorting
+
+### `_df.sort_values()`
+
+- change the order of rows
+- 특정 열에 대하여 오름차순으로 정렬됨
+- 매개변수로 리스트도 올 수 있음 (리스트 앞에 거 부터 정렬, 앞에가 같으면 뒤에 걸로 또 정렬
+- `...(..., ascending=str or list)`
+    - 오름차순 내림차순 여부 정렬 가능
+
+## Subsetting
+
+### `_df[column].isin(['s1','s2'])`
+
+- 특정 열에 있는 특정 요소들
+
+## Aggregating DataFrames
+
+## Summary statistics
+
+### Summarizing numeric data
+
+- mean, median, mode, min, max, var, std, sum, quantile
+
+### `_df['coulmn'].agg(function)`
+
+- 컬럼에 대하여 매개변수로 받는 함수를 실행시켜줌
+- 여러 컬럼, 여러 함수 가능
+
+### `_df['column'].cumsum()`
+
+- cumulative sum
+- 1, 1+2, 1+2+3 ... 이런식으로 각 행을 누적하여 더하려 남김
+- cummax, cummin, cumprod
+
+## Counting
+
+### `_df.drop_duplicates(subset='something')`
+
+- Dropping duplicate name
+- something이 중복이면 하나빼고 삭제
+- subset 에 list를 받아 두개로 판단
+
+### `_df['colmn'].value_counts(sort=bool, normalize=bool)`
+
+- 해당 column에 value들이 몇개 있는지 세어줌
+- sort 사용 가능(True일시 desc)
+- normalize 하면 비율화됨
+
+## Grouped summary statistics
+
+### `_df.groupby('col1')['col2'].method()`
+
+- Group summaries
+- agg활용 가능
+- col1을 그룹별로 지정해서, 'col2'값을 활용
+- co1, col2 복수 가능
+
+## Pivot table
+
+### `_df.pivot_table(values='col1', index='col2', columns='col3' aggfunc=method, fill_value=num(0), margins=bool)`
+
+- groupy의 다른 적용
+- default는 mean()함수
+- 다 복수가능합니다 물론
+- fill_value : NaN 채워줌
+- margins : 총계 넣어줌 (총합, 총평균 등)
+    - fill_values로 넣어준 0 은 평균에 안들어감
+
+---
+
+# Slicing and Indexing DataFrames
+
+## Explicit indexes
+
+### Setting a column as the index
+
+### `_new_df = _df.set_index("index_name")`
+
+- 특정 칼럼을 인덱스로 설정
+- 매개변수로 **리스트 [받을](https://www.notion.so/11af4df33d0143919a86d6fba68fd5fb) 수 있음**
+    - `_df_idx.loc[[("a1", "b1"), ("a2", "b2")]]`
+    - 복수개의 매개변수는 위와 같이 접근
+    - `sort_values()` 처럼 `sort_index()`가능
+        - `(level= , ascending=)`
+
+### `_df.reset_index(drop=bool[_d=false])`
+
+- 인덱스 삭제
+- drop이 False(디폴트)면 기존 인덱스는 하나의 열이 되고 새로 0~n의 numeric index 생성
+- drop이 True 면 set_index로 지정해주었던 것 삭제
+
+### Indexes make subsetting simpler
+
+### `_df[_df['col'].isin(['val1','val2'])]`
+
+```jsx
+          *co1* co2 co3 co4 co5
+index_a    va1   .   .   .   .
+index_b    va2   .   .   .   . 
 ```
+
+### `_df_idx.loc[["val1","val2"]]`
+
+- index가 사전에 지정이 되어있다면 다음과 같이 변수를 접근할 때 편리함
+
+### Now you have two problems
+
+- Index values are just data
+- Indexes violate 'tidy data' principles
+- You need to learn two syntaxes
+- 인덱스 쓰면 문제가 있음, 데이터 안에서의 통일성을 잃게 됨 안쓰는거 추천하지만 다른 사람 코드를 이해하기 위해 공부해놓읍시다
+
+## Slicing and subsetting with .loc and .iloc
+
+### slicing the outer index level
+
+### `_df.loc["rowA":"rowB"]`
+
+- numeric index, position 만이 아닌 loc을 사용해 행의 이름으로도 슬라이싱 가능
+- 맨 마지막이 포함된다는 차이점 ↔ iloc
+- 판다스는 오류를 출력하지 않는 것을 항상 조심해야함
+
+## Working with pivot tables
+
+### The axis argument
+
+### `df.mean(axis='index')`
+
+- 축 인수
+- index가 디폴트
+- columns로 하면 축을 열로 설정
+
+### `dataframe["column"].dt.component`
+
+- component는 month, year 등이 올 수 있음
+- 날짜형 포맷을 component에 맞게 반환해줌
+
+# Creating and Visualizing DataFrames
+
+## Visualizing your data
+
+### `_plt.plot(kind='bar^line^scatter', rot=degree)`
+
+- kind : bar, line, scatter
+- rot: x축 레이블을 회전시킴
+- 플롯은 서로 겹쳐 놓을 수 있음
+
+### `_plt.legend(["a", "b"])`
+
+- 앞에 플롯과 뒤에 플롯이 무엇인지 각각 이름을 붙혀줌
+
+## Missing values
+
+### Detecting missing values
+
+### `_df.isna()`
+
+- 모든 단일값에 대하여 NaN인지 아닌지 True^False
+- .any()라는 메소드가 붙으면, 각 열에 대해 bool이 있는지 없는지 얻음
+- .sum() 메소드를 사용하면, 각 열의 NaN의 개수 구할 수 있음
+
+### `_df.dropna()`
+
+- 누락된 값이 포함된 DF 행을 제거
+
+### `_df.fillna(num)`
+
+- 누적된 값을 num으로 바꿈
+
+### `_df[list].hist()`
+
+- list에 개수만큼 histogram을 만들어줌
+
+## Creating DataFrames
+
+### 1. From a list of dictionaries
+
+- Constructed row by row
+- Each case of Lists
+
+### 2.From a dictionary of lists
+
+- Constructed column by column
+- Key = column name
+- Value = list of column values
+
+## Reading and writing CSVs
+
+물론 항목 별 입력이 일반적으로 데이터를 DataFrame으로 가져 오는 가장 효율적인 방법 아님
+
+### `_df.to_csv('filename.csv')`
+
+- DataFrame to CSV
+
+## Wrap-up
+
+### More to learn
+
+- Joining Data with pandas
+- Streamlined Data Ingestion with pandas
