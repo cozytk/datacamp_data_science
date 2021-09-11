@@ -393,7 +393,9 @@ movie_dict
  2018: 96,
  2019: 93,
  2020: 90}
-```# Data Manipulation with pandas
+ 
+```
+# Data Manipulation with pandas
 
 # Transforming DataFrames
 
